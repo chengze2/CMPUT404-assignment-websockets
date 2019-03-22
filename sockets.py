@@ -28,7 +28,7 @@ app.debug = True
 
 # Referece: 
 # https://github.com/uofa-cmput404/cmput404-slides/tree/master/examples/WebSocketsExamples
-
+# https://github.com/chengze2/CMPUT404-assignment-ajax.git
 clients = list()
 
 def send_all(msg):
