@@ -26,7 +26,7 @@ app = Flask(__name__)
 sockets = Sockets(app)
 app.debug = True
 
-# Referece: 
+# Referece:
 # https://github.com/uofa-cmput404/cmput404-slides/tree/master/examples/WebSocketsExamples
 # https://github.com/chengze2/CMPUT404-assignment-ajax.git
 clients = list()
@@ -105,14 +105,40 @@ def read_ws(ws,client):
         while True:
             msg = ws.receive()
             print("WS RECV: %s" % msg)
+            #print("--------------")
+            #print(msg)
             if(msg is not None):
                 packet = json.loads(msg)
                 send_all_json(packet)
+                # change local World
+                for entity in packet:
+                    myWorld.set(entity, packet[entity])
             else:
                 break
     except:
         '''Done'''
     #return None
+'''
+# try use ws to handle onopen
+@sockets.route('/')
+def on(ws):
+    Fufill the websocket URL of /subscribe, every update notify the
+       websocket and read updates from the websocket 
+    # XXX: TODO IMPLEMENT ME
+    client = Client()
+    clients.append(client)
+    g = gevent.spawn(read_ws, ws, client)
+    try:
+        while True:
+            # block here
+            msg = client.get()
+            ws.send(msg)
+    except Exception as e: # WebsocketError as e:
+        print("WS Error %s" % e)
+    finally:
+        clients.remove(client)
+        gevent.kill(g)
+'''
 
 @sockets.route('/subscribe')
 def subscribe_socket(ws):
@@ -158,6 +184,7 @@ def update(entity):
 def world():
     '''you should probably return the world here'''
     w = myWorld.world()
+    print(w)
     return flask.jsonify(w)
 
 @app.route("/entity/<entity>")
