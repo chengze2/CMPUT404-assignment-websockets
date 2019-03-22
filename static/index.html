@@ -125,6 +125,16 @@ function addEntity(entity, data) {
     world[entity] = data;
     drawNextFrame(); // (but should we?)
     //XXX: Send a XHTML Request that updates the entity you just modified!
+    //alert({entity: data })
+    // Reference: 
+    // http://pietschsoft.com/post/2015/09/05/JavaScript-Basics-How-to-create-a-Dictionary-with-KeyValue-pairs
+    var dict = {};
+    dict[entity] = data;
+    socket.send(JSON.stringify(dict));
+    // Question: why they are different? (treate entity as "entity")
+    //var dict = {entity: data};
+    //dict[entity] = data;
+    //socket.send(JSON.stringify({entity: data }));
 }
 var counter = 0;
 function addEntityWithoutName(data) {
@@ -250,7 +260,7 @@ function update() {
 
 
 function wsSetup() {
-    var url = "ws://"+host+"/subscribe";   
+    var url = "ws://"+host+"/subscribe";  
     socket = new WebSocket(url);
     socket.onopen = function() {
         //XXX: TODO What are you going to do here?
@@ -261,7 +271,18 @@ function wsSetup() {
     socket.onmessage = function(msg) {  
         try {
             debug("WebSocket Recv:" + msg.data);
-            //XXX: TODO What are you going to do here?            
+            //debug(JSON.stringify(world))
+            //XXX: TODO What are you going to do here?
+            var message = JSON.parse(msg.data);
+            //debug("WebSocket Recv:" + message["entity"]["x"]);
+            for (var entity in message) {
+                //addEntity()
+                //alert(typeof(entity))
+                //alert(JSON.stringify(message[entity]))
+                world[entity] = message[entity]
+            }
+            drawNextFrame();
+            //alert(world)
         } catch (e) {
             alert("socket on message: " + e);
         }
