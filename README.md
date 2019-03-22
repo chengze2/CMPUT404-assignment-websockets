@@ -59,3 +59,11 @@ Contributors
 * Mark Galloway
 * Abram Hindle
 * Cole Mackenzie
+* Chengze Li
+
+References
+==========
+
+* https://github.com/uofa-cmput404/cmput404-slides/tree/master/examples/WebSocketsExamples
+* http://pietschsoft.com/post/2015/09/05/JavaScript-Basics-How-to-create-a-Dictionary-with-KeyValue-pairs
+* https://github.com/chengze2/CMPUT404-assignment-ajax.git
