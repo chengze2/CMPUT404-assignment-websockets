@@ -118,27 +118,6 @@ def read_ws(ws,client):
     except:
         '''Done'''
     #return None
-'''
-# try use ws to handle onopen
-@sockets.route('/')
-def on(ws):
-    Fufill the websocket URL of /subscribe, every update notify the
-       websocket and read updates from the websocket 
-    # XXX: TODO IMPLEMENT ME
-    client = Client()
-    clients.append(client)
-    g = gevent.spawn(read_ws, ws, client)
-    try:
-        while True:
-            # block here
-            msg = client.get()
-            ws.send(msg)
-    except Exception as e: # WebsocketError as e:
-        print("WS Error %s" % e)
-    finally:
-        clients.remove(client)
-        gevent.kill(g)
-'''
 
 @sockets.route('/subscribe')
 def subscribe_socket(ws):
@@ -149,9 +128,13 @@ def subscribe_socket(ws):
     clients.append(client)
     g = gevent.spawn(read_ws, ws, client)
     try:
+        ws.send(json.dumps(myWorld.world()))
         while True:
             # block here
             msg = client.get()
+            #print("----------")
+            #print(msg)
+            #msg['world'] = myWorld.world()
             ws.send(msg)
     except Exception as e: # WebsocketError as e:
         print("WS Error %s" % e)

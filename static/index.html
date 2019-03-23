@@ -282,47 +282,11 @@ function wsSetup() {
     var url = "ws://"+host+"/subscribe";
     socket = new WebSocket(url);
     socket.onopen = function() {
-        //XXX: TODO What are you going to do here?
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState==4) {
-                try {
-                    if (xhr.status==200) {
-                        //XXX: parse some JSON from the request!
-                        //alert(xhr.responseText)
-                        var responseObj = JSON.parse(xhr.responseText);
-                        //XXX: Pass the data to the callback!
-                        //callback(responseObj)
-                        world = responseObj;
-                    }
-                }
-                catch(e) {
-                    alert('Error: ' + e.name);
-                }
-            }
-        };
-
-
-        //XXX: set the mimetype and the accept headers!
-        // Remember to use application/json !
-        // Gilles Quenot, John
-        // https://stackoverflow.com/questions/39519246/make-xmlhttprequest-post-using-json
-        let url_http = "http://" + host + "/world";
-        xhr.open("GET", url_http, false);
-        xhr.send();
-
-    };
-    socket.onerror = function(msg) {
-        debug("WebSocket Error:" + msg.data);
-    };
-    socket.onmessage = function(msg) {
-        try {
-            debug("WebSocket Recv:" + msg.data);
-            //debug(JSON.stringify(world))
-            //XXX: TODO What are you going to do here?
-            var message = JSON.parse(msg.data);
-            //debug("WebSocket Recv:" + message["entity"]["x"]);
+        var message = JSON.parse(msg.data);
+        alert(Object.keys(message).length)
+        if (Object.keys(message).length >= 1){
             for (entity in message) {
+                debug("WebSocket Recv:" + msg.data);
                 //addEntity()
                 //alert(typeof(entity))
                 //alert(JSON.stringify(message[entity]))
@@ -330,6 +294,30 @@ function wsSetup() {
             }
             drawNextFrame();
             //alert(world)
+        }
+    };
+    socket.onerror = function(msg) {
+        debug("WebSocket Error:" + msg.data);
+    };
+    socket.onmessage = function(msg) {
+        try {
+            //debug(JSON.stringify(world))
+            //XXX: TODO What are you going to do here?
+            var message = JSON.parse(msg.data);
+            //debug("WebSocket Recv:" + message["entity"]["x"]);
+            //alert(Object.keys(message).length);
+            if (Object.keys(message).length == 1){
+                debug("WebSocket Recv:" + msg.data);
+                for (entity in message) {
+                    //addEntity()
+                    //alert(typeof(entity))
+                    //alert(JSON.stringify(message[entity]))
+                    world[entity] = message[entity]
+                }
+                drawNextFrame();
+                //alert(world)
+            }
+
         } catch (e) {
             alert("socket on message: " + e);
         }
